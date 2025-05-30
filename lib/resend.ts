@@ -1,6 +1,6 @@
 import { Resend } from "resend"
 import { WelcomeEmail } from "@/components/emails/welcome-email"
-import type * as React from "react"
+import React from "react"
 
 // Initialize Resend with API key
 export const resend = new Resend(process.env.RESEND_API_KEY)
@@ -12,7 +12,7 @@ export const sendWelcomeEmail = async (email: string, name: string) => {
       from: "Convrt.ai <hello@convrt.ai>",
       to: email,
       subject: "Welcome to Convrt.ai - Let's Transform Your Outreach!",
-      react: WelcomeEmail({ name }),
+      react: React.createElement(WelcomeEmail, { name }),
     })
 
     if (error) {
@@ -27,30 +27,8 @@ export const sendWelcomeEmail = async (email: string, name: string) => {
   }
 }
 
-// Send onboarding completion email
-export const sendOnboardingCompleteEmail = async (email: string, name: string) => {
-  try {
-    const { data, error } = await resend.emails.send({
-      from: "Convrt.ai <hello@convrt.ai>",
-      to: email,
-      subject: "Your Convrt.ai Setup is Complete!",
-      react: OnboardingCompleteEmail({ name }),
-    })
-
-    if (error) {
-      console.error("Failed to send onboarding complete email:", error)
-      return { success: false, error }
-    }
-
-    return { success: true, data }
-  } catch (error) {
-    console.error("Error sending onboarding complete email:", error)
-    return { success: false, error }
-  }
-}
-
 // Simple onboarding complete email component
-const OnboardingCompleteEmail: React.FC<{ name: string }> = ({ name }) => {
+const OnboardingCompleteEmail = ({ name }: { name: string }) => {
   return (
     <div>
       <h1>Setup Complete!</h1>
@@ -76,4 +54,26 @@ const OnboardingCompleteEmail: React.FC<{ name: string }> = ({ name }) => {
       </p>
     </div>
   )
+}
+
+// Send onboarding completion email
+export const sendOnboardingCompleteEmail = async (email: string, name: string) => {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: "Convrt.ai <hello@convrt.ai>",
+      to: email,
+      subject: "Your Convrt.ai Setup is Complete!",
+      react: React.createElement(OnboardingCompleteEmail, { name }),
+    })
+
+    if (error) {
+      console.error("Failed to send onboarding complete email:", error)
+      return { success: false, error }
+    }
+
+    return { success: true, data }
+  } catch (error) {
+    console.error("Error sending onboarding complete email:", error)
+    return { success: false, error }
+  }
 }

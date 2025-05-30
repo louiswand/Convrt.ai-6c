@@ -18,7 +18,11 @@ export async function GET(request: NextRequest) {
     if (!error && data?.user) {
       // Send welcome email if this is a new user
       try {
-        await sendWelcomeEmail(data.user.email || "", data.user.user_metadata.full_name || "there")
+        // Only attempt to send email if we have a valid email address
+        if (data.user.email) {
+          const fullName = data.user.user_metadata?.full_name || "there"
+          await sendWelcomeEmail(data.user.email, fullName)
+        }
       } catch (emailError) {
         console.error("Failed to send welcome email:", emailError)
       }
