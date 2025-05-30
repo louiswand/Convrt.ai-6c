@@ -1,5 +1,6 @@
 import { Resend } from "resend"
 import { WelcomeEmail } from "@/components/emails/welcome-email"
+import type * as React from "react"
 
 // Initialize Resend with API key
 export const resend = new Resend(process.env.RESEND_API_KEY)
@@ -48,8 +49,8 @@ export const sendOnboardingCompleteEmail = async (email: string, name: string) =
   }
 }
 
-// Simple email templates (you can enhance these with proper React components)
-const OnboardingCompleteEmail = ({ name }: { name: string }) => {
+// Onboarding complete email component
+const OnboardingCompleteEmail: React.FC<{ name: string }> = ({ name }) => {
   return (
     <div style={{ fontFamily: "Arial, sans-serif", maxWidth: "600px", margin: "0 auto" }}>
       <h1 style={{ color: "#7c3aed" }}>Setup Complete! 🚀</h1>
@@ -58,10 +59,10 @@ const OnboardingCompleteEmail = ({ name }: { name: string }) => {
         Congratulations! Your Convrt.ai account is now fully set up and ready to help you transform your outreach
         strategy.
       </p>
-      <p>Here's what happens next:</p>
+      <p>Here&apos;s what happens next:</p>
       <ul>
         <li>Our AI will start scanning social platforms for opportunities</li>
-        <li>You'll receive notifications when high-intent conversations are found</li>
+        <li>You&apos;ll receive notifications when high-intent conversations are found</li>
         <li>Review and approve AI-generated comments before posting</li>
       </ul>
       <p>Ready to start building trust and closing more deals?</p>

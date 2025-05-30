@@ -6,7 +6,14 @@ interface WelcomeEmailProps {
 
 export const WelcomeEmail: React.FC<WelcomeEmailProps> = ({ name }) => {
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", maxWidth: "600px", margin: "0 auto", padding: "20px" }}>
+    <div
+      style={{
+        fontFamily: "Arial, sans-serif",
+        maxWidth: "600px",
+        margin: "0 auto",
+        padding: "20px",
+      }}
+    >
       <div style={{ textAlign: "center", marginBottom: "30px" }}>
         <div
           style={{
@@ -28,7 +35,7 @@ export const WelcomeEmail: React.FC<WelcomeEmailProps> = ({ name }) => {
       <p style={{ fontSize: "16px", lineHeight: "1.6", color: "#374151" }}>Hi {name},</p>
 
       <p style={{ fontSize: "16px", lineHeight: "1.6", color: "#374151" }}>
-        Thank you for joining Convrt.ai! We're excited to help you transform your cold outreach into warm, trusted
+        Thank you for joining Convrt.ai! We&apos;re excited to help you transform your cold outreach into warm, trusted
         relationships that actually convert.
       </p>
 
@@ -40,7 +47,7 @@ export const WelcomeEmail: React.FC<WelcomeEmailProps> = ({ name }) => {
           margin: "20px 0",
         }}
       >
-        <h3 style={{ color: "#1f2937", marginTop: "0" }}>What's Next?</h3>
+        <h3 style={{ color: "#1f2937", marginTop: "0" }}>What&apos;s Next?</h3>
         <ol style={{ color: "#374151", paddingLeft: "20px" }}>
           <li style={{ marginBottom: "8px" }}>Complete your onboarding to set up your ideal customer profile</li>
           <li style={{ marginBottom: "8px" }}>Our AI will start finding high-intent conversations</li>
