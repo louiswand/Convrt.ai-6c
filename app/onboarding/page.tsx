@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,6 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/components/auth-provider"
+import { supabase } from "@/lib/supabase"
 import { ArrowRight, CheckCircle, Linkedin, Twitter, MessageSquare } from "lucide-react"
 
 export default function OnboardingPage() {
@@ -26,6 +28,13 @@ export default function OnboardingPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
+  const { user, loading } = useAuth()
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/auth/login")
+    }
+  }, [user, loading, router])
 
   const handleNext = () => {
     if (step < 4) {
@@ -36,12 +45,26 @@ export default function OnboardingPage() {
   }
 
   const handleComplete = async () => {
+    if (!user) return
+
     setIsLoading(true)
     try {
-      // Simulate API call to save onboarding data
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // Save onboarding data to Supabase
+      const { error } = await supabase.from("onboarding").insert({
+        id: crypto.randomUUID(),
+        user_id: user.id,
+        company: formData.company,
+        role: formData.role,
+        industry: formData.industry,
+        team_size: formData.teamSize,
+        icp_description: formData.icpDescription,
+        keywords: formData.keywords,
+        tone: formData.tone,
+        platforms: formData.platforms,
+        is_completed: true,
+      })
 
-      localStorage.setItem("convrt_onboarding", JSON.stringify(formData))
+      if (error) throw error
 
       toast({
         title: "Setup complete!",
@@ -50,6 +73,7 @@ export default function OnboardingPage() {
 
       router.push("/dashboard")
     } catch (error) {
+      console.error("Error saving onboarding:", error)
       toast({
         title: "Setup failed",
         description: "Please try again.",
@@ -67,6 +91,18 @@ export default function OnboardingPage() {
         ? prev.platforms.filter((p) => p !== platform)
         : [...prev.platforms, platform],
     }))
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return null
   }
 
   return (

@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -11,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/components/auth-provider"
 import { Eye, EyeOff, Mail } from "lucide-react"
 
 export default function LoginPage() {
@@ -20,26 +20,29 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
+  const { signIn } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // For demo purposes, accept any email/password
-      if (email && password) {
-        localStorage.setItem("convrt_user", JSON.stringify({ email, name: email.split("@")[0] }))
-        toast({
-          title: "Welcome back!",
-          description: "You've been successfully logged in.",
-        })
-        router.push("/dashboard")
-      } else {
+      if (!email || !password) {
         throw new Error("Please fill in all fields")
       }
+
+      const { error } = await signIn(email, password)
+
+      if (error) {
+        throw new Error(error)
+      }
+
+      toast({
+        title: "Welcome back!",
+        description: "You've been successfully logged in.",
+      })
+
+      router.push("/dashboard")
     } catch (error) {
       toast({
         title: "Login failed",
@@ -54,7 +57,7 @@ export default function LoginPage() {
   const handleGoogleLogin = () => {
     toast({
       title: "Google OAuth",
-      description: "Google authentication would be implemented here.",
+      description: "Google authentication will be implemented soon.",
     })
   }
 

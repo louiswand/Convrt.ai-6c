@@ -77,11 +77,11 @@ const secondaryItems = [
 ]
 
 export function DashboardSidebar() {
-  const { user, logout } = useAuth()
+  const { profile, signOut } = useAuth()
   const router = useRouter()
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await signOut()
     router.push("/")
   }
 
@@ -141,9 +141,11 @@ export function DashboardSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
                   <Avatar className="h-6 w-6">
-                    <AvatarFallback className="text-xs">{user?.name?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                    <AvatarFallback className="text-xs">
+                      {profile?.full_name?.charAt(0).toUpperCase() || "U"}
+                    </AvatarFallback>
                   </Avatar>
-                  <span className="truncate">{user?.name || "User"}</span>
+                  <span className="truncate">{profile?.full_name || "User"}</span>
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>

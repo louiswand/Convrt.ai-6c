@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -12,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/components/auth-provider"
 import { Eye, EyeOff, Mail } from "lucide-react"
 
 export default function RegisterPage() {
@@ -27,6 +27,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
+  const { signUp } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -50,22 +51,19 @@ export default function RegisterPage() {
         throw new Error("Please agree to the terms and conditions")
       }
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // Sign up with Supabase
+      const { error } = await signUp(formData.email, formData.password, formData.name)
 
-      localStorage.setItem(
-        "convrt_user",
-        JSON.stringify({
-          email: formData.email,
-          name: formData.name,
-        }),
-      )
+      if (error) {
+        throw new Error(error)
+      }
 
       toast({
         title: "Account created!",
-        description: "Welcome to Convrt.ai. Let's get you set up.",
+        description: "Please check your email to verify your account, then complete onboarding.",
       })
 
+      // Redirect to onboarding
       router.push("/onboarding")
     } catch (error) {
       toast({
@@ -78,11 +76,20 @@ export default function RegisterPage() {
     }
   }
 
-  const handleGoogleSignup = () => {
-    toast({
-      title: "Google OAuth",
-      description: "Google authentication would be implemented here.",
-    })
+  const handleGoogleSignup = async () => {
+    try {
+      // This would implement Google OAuth with Supabase
+      toast({
+        title: "Google OAuth",
+        description: "Google authentication will be implemented soon.",
+      })
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign up with Google",
+        variant: "destructive",
+      })
+    }
   }
 
   return (
