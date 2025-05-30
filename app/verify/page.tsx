@@ -236,7 +236,6 @@ export default function VerifyPage() {
           <p className="text-muted-foreground">Comprehensive test of all Convrt.ai components</p>
         </div>
 
-        {/* Overall Progress */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
@@ -256,7 +255,6 @@ export default function VerifyPage() {
           </CardContent>
         </Card>
 
-        {/* Test Results */}
         <div className="grid gap-4">
           {tests.map((test) => (
             <Card key={test.name} className={test.status === "error" ? "border-red-200" : ""}>
@@ -285,7 +283,6 @@ export default function VerifyPage() {
           ))}
         </div>
 
-        {/* Action Buttons */}
         <div className="flex justify-center gap-4">
           <Button onClick={runVerification} disabled={isRunning} size="lg">
             {isRunning ? "Running Verification..." : "Run Verification"}
@@ -298,7 +295,6 @@ export default function VerifyPage() {
           )}
         </div>
 
-        {/* Next Steps */}
         {allTestsComplete && (
           <Card>
             <CardHeader>

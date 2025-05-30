@@ -33,7 +33,7 @@ export const sendOnboardingCompleteEmail = async (email: string, name: string) =
     const { data, error } = await resend.emails.send({
       from: "Convrt.ai <hello@convrt.ai>",
       to: email,
-      subject: "🎉 Your Convrt.ai Setup is Complete!",
+      subject: "Your Convrt.ai Setup is Complete!",
       react: OnboardingCompleteEmail({ name }),
     })
 
@@ -49,36 +49,26 @@ export const sendOnboardingCompleteEmail = async (email: string, name: string) =
   }
 }
 
-// Onboarding complete email component
+// Simple onboarding complete email component
 const OnboardingCompleteEmail: React.FC<{ name: string }> = ({ name }) => {
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", maxWidth: "600px", margin: "0 auto" }}>
-      <h1 style={{ color: "#7c3aed" }}>Setup Complete! 🚀</h1>
+    <div>
+      <h1>Setup Complete!</h1>
       <p>Hi {name},</p>
       <p>
         Congratulations! Your Convrt.ai account is now fully set up and ready to help you transform your outreach
         strategy.
       </p>
-      <p>Here&apos;s what happens next:</p>
+      <p>Here is what happens next:</p>
       <ul>
         <li>Our AI will start scanning social platforms for opportunities</li>
-        <li>You&apos;ll receive notifications when high-intent conversations are found</li>
+        <li>You will receive notifications when high-intent conversations are found</li>
         <li>Review and approve AI-generated comments before posting</li>
       </ul>
       <p>Ready to start building trust and closing more deals?</p>
-      <a
-        href="https://your-app-url.vercel.app/dashboard"
-        style={{
-          backgroundColor: "#7c3aed",
-          color: "white",
-          padding: "12px 24px",
-          textDecoration: "none",
-          borderRadius: "6px",
-          display: "inline-block",
-        }}
-      >
-        Go to Dashboard
-      </a>
+      <p>
+        <a href="https://your-app-url.vercel.app/dashboard">Go to Dashboard</a>
+      </p>
       <p>
         Best regards,
         <br />
