@@ -6,6 +6,9 @@ export const resend = new Resend(process.env.RESEND_API_KEY)
 // Send welcome email to new users
 export const sendWelcomeEmail = async (email: string, name: string) => {
   try {
+    console.log("Attempting to send welcome email to:", email)
+    console.log("Resend API Key present:", !!process.env.RESEND_API_KEY)
+    
     const { data, error } = await resend.emails.send({
       from: "Convrt.ai <hello@convrt.ai>",
       to: email,
@@ -18,6 +21,7 @@ export const sendWelcomeEmail = async (email: string, name: string) => {
       return { success: false, error }
     }
 
+    console.log("Welcome email sent successfully:", data)
     return { success: true, data }
   } catch (error) {
     console.error("Error sending welcome email:", error)
