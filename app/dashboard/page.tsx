@@ -19,6 +19,7 @@ import {
   Twitter,
   ExternalLink,
   RefreshCw,
+  Settings,
 } from "lucide-react"
 
 // Mock data for demonstration
@@ -107,7 +108,7 @@ export default function DashboardPage() {
   const handleRefresh = async () => {
     setRefreshing(true)
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 2000))
     setRefreshing(false)
   }
 
@@ -138,13 +139,8 @@ export default function DashboardPage() {
         <Separator orientation="vertical" className="mr-2 h-4" />
         <div className="flex items-center gap-2">
           <h1 className="text-lg font-semibold">Dashboard</h1>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={refreshing}
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+          <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshing}>
+            <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
             Refresh
           </Button>
         </div>
@@ -246,7 +242,7 @@ export default function DashboardPage() {
                     <Progress value={opportunity.engagement} className="w-20 h-2" />
                     <span className="text-xs text-muted-foreground">{opportunity.engagement}% match</span>
                   </div>
-                  
+
                   <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
                     <p className="text-sm">{opportunity.suggestedComment}</p>
                   </div>
@@ -273,9 +269,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>
-              Manage your engagement strategy
-            </CardDescription>
+            <CardDescription>Manage your engagement strategy</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-3">
             <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
@@ -283,4 +277,16 @@ export default function DashboardPage() {
               <span>Update ICP</span>
             </Button>
             <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
-              <Eye\
+              <Eye className="w-6 h-6" />
+              <span>Review Analytics</span>
+            </Button>
+            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+              <Settings className="w-6 h-6" />
+              <span>Adjust Settings</span>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
