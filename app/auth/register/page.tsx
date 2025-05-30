@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
-import { useAuth } from "@/components/auth-provider"
+import { supabase } from "@/lib/supabase"
 import { Eye, EyeOff, Mail } from "lucide-react"
 
 export default function RegisterPage() {
@@ -27,7 +27,6 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
-  const { signUp } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -52,10 +51,20 @@ export default function RegisterPage() {
       }
 
       // Sign up with Supabase
-      const { error } = await signUp(formData.email, formData.password, formData.name)
+      const { error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            full_name: formData.name,
+            email: formData.email,
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
+        },
+      })
 
       if (error) {
-        throw new Error(error)
+        throw new Error(error.message)
       }
 
       toast({
@@ -63,8 +72,7 @@ export default function RegisterPage() {
         description: "Please check your email to verify your account, then complete onboarding.",
       })
 
-      // Redirect to onboarding
-      router.push("/onboarding")
+      // Stay on the page until email verification
     } catch (error) {
       toast({
         title: "Registration failed",
@@ -78,11 +86,16 @@ export default function RegisterPage() {
 
   const handleGoogleSignup = async () => {
     try {
-      // This would implement Google OAuth with Supabase
-      toast({
-        title: "Google OAuth",
-        description: "Google authentication will be implemented soon.",
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
+        },
       })
+
+      if (error) {
+        throw error
+      }
     } catch (error) {
       toast({
         title: "Error",

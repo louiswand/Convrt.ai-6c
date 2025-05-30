@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
-import { useAuth } from "@/components/auth-provider"
+import { supabase } from "@/lib/supabase"
 import { Eye, EyeOff, Mail } from "lucide-react"
 
 export default function LoginPage() {
@@ -20,7 +20,6 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
-  const { signIn } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,10 +30,13 @@ export default function LoginPage() {
         throw new Error("Please fill in all fields")
       }
 
-      const { error } = await signIn(email, password)
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
 
       if (error) {
-        throw new Error(error)
+        throw new Error(error.message)
       }
 
       toast({
@@ -54,11 +56,60 @@ export default function LoginPage() {
     }
   }
 
-  const handleGoogleLogin = () => {
-    toast({
-      title: "Google OAuth",
-      description: "Google authentication will be implemented soon.",
-    })
+  const handleGoogleLogin = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+        },
+      })
+
+      if (error) {
+        throw error
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign in with Google",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast({
+        title: "Email required",
+        description: "Please enter your email address to reset your password.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      })
+
+      if (error) {
+        throw error
+      }
+
+      toast({
+        title: "Password reset email sent",
+        description: "Check your email for a link to reset your password.",
+      })
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send password reset email.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -128,9 +179,9 @@ export default function LoginPage() {
           </form>
 
           <div className="text-center text-sm">
-            <Link href="#" className="text-primary hover:underline">
+            <button type="button" onClick={handleForgotPassword} className="text-primary hover:underline">
               Forgot your password?
-            </Link>
+            </button>
           </div>
 
           <div className="text-center text-sm text-muted-foreground">

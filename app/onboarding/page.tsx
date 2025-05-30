@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/auth-provider"
 import { supabase } from "@/lib/supabase"
+import { sendOnboardingCompleteEmail } from "@/lib/resend"
 import { ArrowRight, CheckCircle, Linkedin, Twitter, MessageSquare } from "lucide-react"
 
 export default function OnboardingPage() {
@@ -28,7 +29,7 @@ export default function OnboardingPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
-  const { user, loading } = useAuth()
+  const { user, profile, loading } = useAuth()
 
   useEffect(() => {
     if (!loading && !user) {
@@ -45,7 +46,7 @@ export default function OnboardingPage() {
   }
 
   const handleComplete = async () => {
-    if (!user) return
+    if (!user || !profile) return
 
     setIsLoading(true)
     try {
@@ -66,8 +67,16 @@ export default function OnboardingPage() {
 
       if (error) throw error
 
+      // Send onboarding completion email
+      try {
+        await sendOnboardingCompleteEmail(profile.email, profile.full_name || "there")
+      } catch (emailError) {
+        console.error("Failed to send onboarding complete email:", emailError)
+        // Don't fail the onboarding if email fails
+      }
+
       toast({
-        title: "Setup complete!",
+        title: "Setup complete! 🎉",
         description: "Welcome to Convrt.ai. Let's start finding opportunities.",
       })
 
